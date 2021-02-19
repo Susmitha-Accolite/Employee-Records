@@ -1,8 +1,9 @@
 import React from 'react'
-import EmployeeForm from "../EmployeeForm";
 import PageHeader from "../../Components/PageHeader";
 import PeopleOutlineTwoToneIcon from '@material-ui/icons/PeopleOutlineTwoTone';
 import { Paper,makeStyles } from '@material-ui/core';
+import EmployeeForm from '../EmployeeForm'
+import * as employeeService from '../../Services/service';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 
 const useStyles = makeStyles(theme => ({
@@ -12,21 +13,24 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-export default function Employees() {
-
+export default function EditEmployee(props) {
+    const id = props.location.state['id'];
+    console.log(id);
     const classes = useStyles();
+    const details = employeeService.getEmployeeById(id);
+    // console.log(details);
 
     return (
         <>
             <PageHeader
-                title="New Employee"
-                subTitle="Adding new employee"
+                title="Edit Employee"
+                subTitle="Editing Employee Details"
                 empIcon={<PeopleOutlineTwoToneIcon fontSize="large" />}
-                funIcon={<ArrowBackIosIcon fontSize="large"/>}
+                funIcon={<ArrowBackIosIcon fontSize="medium"/>}
                 flag={false}
             />
             <Paper className={classes.pageContent}>
-                <EmployeeForm />
+                <EmployeeForm details={details}/>
             </Paper>
         </>
     )

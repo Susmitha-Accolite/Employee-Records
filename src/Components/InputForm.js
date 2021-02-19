@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { makeStyles } from "@material-ui/core";
 
+// handles the events in Form
+
 export function InputForm(initialValues, validateOnChange = false, validate) {
 
 
@@ -43,6 +45,8 @@ const useStyles = makeStyles(theme => ({
         }
     }
 }))
+
+// Basic HTML form for Inputing
 
 export function Form(props) {
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, TextField, Button, makeStyles} from '@material-ui/core';
-import { InputForm, Form } from '../../Components/InputForm';
-import * as employeeService from "../../Services/service";
+import { InputForm, Form } from '../Components/InputForm';
+import * as employeeService from "../Services/service";
 
 const useStyles = makeStyles(theme => ({
     Button: {
@@ -21,10 +21,11 @@ const initialValues = {
     zipcode: ''
 }
 
-export default function EmployeeForm() {
-
+export default function EmployeeForm(props) {
+    let details = Object.keys(props).length === 0 ? {} : props.details;
+    // console.log(details);
+    // console.log(details[0]);
     const classes = useStyles();
-
     const validate = (fieldValues = values) => {
         let temp = { ...errors }
         if ('fullName' in fieldValues)
@@ -58,10 +59,35 @@ export default function EmployeeForm() {
 
     const handleSubmit = e => {
         e.preventDefault()
-        console.log("Heloo");
-        if (validate()){
-            employeeService.insertEmployee(values)
-            resetForm()
+        // console.log(values);
+        if(Object.keys(details).length === 0){
+            if (validate()){
+                employeeService.insertEmployee(values)
+                resetForm()
+            }
+        }
+        else {
+
+            if(values.fullName !== ""){
+                details[0].fullName=values.fullName;
+            }
+            if(values.department !== ""){
+                details[0].department=values.department;
+            }
+            if(values.mobile !== ""){
+                details[0].mobile=values.mobile;
+            }
+            if(values.city !== ""){
+                details[0].city=values.city;
+            }
+            if(values.state !== ""){
+                details[0].state=values.state;
+            }
+            if(values.zipcode !== ""){
+                details[0].zipcode=values.zipcode;
+            }
+            alert("Details edited successfully!!")
+            employeeService.editEmployee(details[0])
         }
     }
 
@@ -73,25 +99,35 @@ export default function EmployeeForm() {
                         variant="outlined"
                         name="fullName"
                         label="Full Name"
-                        value={values.fullName}
+                        {...(Object.keys(details).length === 0 ? 
+                        {value: values.fullName,
+                        error: errors.fullName } : 
+                        {defaultValue: details[0].fullName}
+                        )}
                         onChange={handleInputChange}
-                        error={errors.fullName}
                     />
                     <TextField
                         variant="outlined"
                         label="Department"
                         name="department"
-                        value={values.department}
+                        {...(Object.keys(details).length === 0 ? 
+                        {value: values.department,
+                        error:errors.department} : 
+                        {defaultValue: details[0].department
+                        }
+                        )}
                         onChange={handleInputChange}
-                        error={errors.department}
                     />
                     <TextField
                         variant="outlined"
                         label="Mobile"
                         name="mobile"
-                        value={values.mobile}
+                       {...(Object.keys(details).length === 0 ? 
+                        {value: values.mobile,
+                        error:errors.mobile} : 
+                        {defaultValue: details[0].mobile}
+                        )}
                         onChange={handleInputChange}
-                        error={errors.mobile}
                     />
                     <div>
                     <Button
@@ -110,28 +146,36 @@ export default function EmployeeForm() {
                         variant="outlined"
                         label="City"
                         name="city"
-                        value={values.city}
+                        {...(Object.keys(details).length === 0 ? 
+                        {value: values.city,
+                        error:errors.city} : 
+                        {defaultValue: details[0].city}
+                        )}
                         onChange={handleInputChange}
-                        error={errors.city}
                     />
                     <TextField
                         variant="outlined"
                         label="State"
                         name="state"
-                        value={values.state}
+                        {...(Object.keys(details).length === 0 ? 
+                        {value: values.state,
+                        error:errors.state} : 
+                        {defaultValue: details[0].state}
+                        )}
                         onChange={handleInputChange}
-                        error={errors.state}
                     />
                     <TextField
                         variant="outlined"
                         label="Zipcode"
                         name="zipcode"
-                        value={values.zipcode}
+                        {...(Object.keys(details).length === 0 ? 
+                        {value: values.zipcode,
+                        error:errors.zipcode} : 
+                        {defaultValue: details[0].zipcode}
+                        )}
                         onChange={handleInputChange}
-                        error={errors.zipcode}
                     />
-
-                    
+                    {(Object.keys(details).length === 0) ? 
                     <div>
                     <Button
                         variant="contained"
@@ -143,6 +187,8 @@ export default function EmployeeForm() {
                         Reset
                     </Button>
                     </div>
+                    : <></>
+                    }
                 </Grid>
             </Grid>
         </Form>

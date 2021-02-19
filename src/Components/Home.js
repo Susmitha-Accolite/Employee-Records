@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles, CssBaseline, createMuiTheme, ThemeProvider } from '@material-ui/core';
-import Header from "../Components/Header";
-import EmployeeList from './EmployeeList';
+import EmployeeTable from '../Pages/DisplayEmployee/EmployeeTable';
 
 const theme = createMuiTheme({
   palette: {
@@ -34,21 +33,18 @@ const theme = createMuiTheme({
 
 const useStyles = makeStyles({
   appMain: {
-    // paddingLeft: '320px',
     width: '100%'
   }
 })
 
+// Renders employee table records as a landing page
+
 function Home() {
   const classes = useStyles();
-
   return (
     <ThemeProvider theme={theme}>
-      <div className={classes.appMain}>
-        <Header />
-      </div>
       <CssBaseline />
-      <EmployeeList />
+      <EmployeeTable />
     </ThemeProvider>
   );
 }
