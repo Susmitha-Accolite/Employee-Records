@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { Grid, TextField, Button, makeStyles} from '@material-ui/core';
 import { InputForm, Form } from '../Components/InputForm';
 import * as employeeService from "../Services/service";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { useHistory } from 'react-router-dom';
+import * as ROUTES from '../Routes/Routes';
 
 const useStyles = makeStyles(theme => ({
     Button: {
@@ -23,8 +30,6 @@ const initialValues = {
 
 export default function EmployeeForm(props) {
     let details = Object.keys(props).length === 0 ? {} : props.details;
-    // console.log(details);
-    // console.log(details[0]);
     const classes = useStyles();
     const validate = (fieldValues = values) => {
         let temp = { ...errors }
@@ -57,42 +62,57 @@ export default function EmployeeForm(props) {
         resetForm
     } = InputForm(initialValues, true, validate);
 
-    const handleSubmit = e => {
-        e.preventDefault()
-        // console.log(values);
+    const[open, setOpen] = useState(false);
+
+    const handleClose = () =>{ 
+        setOpen(false);
+    }
+
+    const handleOpen = () => {
+        setOpen(true);
+    }
+
+    const history = useHistory();
+    const handleSubmit = flag => {
+        console.log(flag);
+        setOpen(false);
+
         if(Object.keys(details).length === 0){
             if (validate()){
                 employeeService.insertEmployee(values)
+                if(!flag)
+                    history.push(ROUTES.LANDING);
                 resetForm()
             }
         }
         else {
-
-            if(values.fullName !== ""){
-                details[0].fullName=values.fullName;
+            if(!flag) {
+                if(values.fullName !== ""){
+                    details[0].fullName=values.fullName;
+                }
+                if(values.department !== ""){
+                    details[0].department=values.department;
+                }
+                if(values.mobile !== ""){
+                    details[0].mobile=values.mobile;
+                }
+                if(values.city !== ""){
+                    details[0].city=values.city;
+                }
+                if(values.state !== ""){
+                    details[0].state=values.state;
+                }
+                if(values.zipcode !== ""){
+                    details[0].zipcode=values.zipcode;
+                }
+                employeeService.editEmployee(details[0]);
+                history.push(ROUTES.LANDING);
             }
-            if(values.department !== ""){
-                details[0].department=values.department;
-            }
-            if(values.mobile !== ""){
-                details[0].mobile=values.mobile;
-            }
-            if(values.city !== ""){
-                details[0].city=values.city;
-            }
-            if(values.state !== ""){
-                details[0].state=values.state;
-            }
-            if(values.zipcode !== ""){
-                details[0].zipcode=values.zipcode;
-            }
-            alert("Details edited successfully!!")
-            employeeService.editEmployee(details[0])
         }
     }
 
     return (
-        <Form onSubmit={handleSubmit}>
+        <Form >
             <Grid container>
                 <Grid item xs={6}>
                     <TextField
@@ -134,7 +154,7 @@ export default function EmployeeForm(props) {
                         variant="contained"
                         size="large"
                         color="primary"
-                        onClick={handleSubmit}
+                        onClick={handleOpen}
                         style={{float:'right', marginRight:"20%"}}
                         >
                         Submit
@@ -182,13 +202,50 @@ export default function EmployeeForm(props) {
                         size="large"
                         color="primary"
                         onClick={resetForm}
-                        // classes={{ root: classes.root, label: classes.label }}
                         >
                         Reset
                     </Button>
                     </div>
                     : <></>
                     }
+                    <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                  >
+                    {(Object.keys(details).length === 0) ? 
+                    <> 
+                    <DialogTitle id="alert-dialog-title">Submit or Add</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id="alert-dialog-description">
+                        Click on submit to submit the data or click on add record to add new records.
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={()=> handleSubmit(false)} color="primary">
+                        Submit
+                      </Button>
+                      <Button onClick={()=> handleSubmit(true)} color="primary" autoFocus>
+                        Add Record
+                      </Button>
+                    </DialogActions>
+                    </> : <>
+                    <DialogTitle id="alert-dialog-title">Do you want to edit the details?</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id="alert-dialog-description">
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={()=> handleSubmit(false)} color="primary">
+                        Save
+                      </Button>
+                      <Button onClick={()=> handleSubmit(true)} color="primary" autoFocus>
+                        Cancel
+                      </Button>
+                    </DialogActions>
+                    </> }
+                  </Dialog> 
                 </Grid>
             </Grid>
         </Form>

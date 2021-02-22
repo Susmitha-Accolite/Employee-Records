@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PageHeader from "../../Components/PageHeader";
 import PeopleOutlineTwoToneIcon from '@material-ui/icons/PeopleOutlineTwoTone';
-import { Paper, makeStyles, TableBody, TableRow, TableCell, Toolbar, InputAdornment, Tooltip, fade, InputBase, TextField, Typography } from '@material-ui/core';
+import { Paper, makeStyles, TableBody, TableRow, TableCell, Toolbar, InputAdornment, Tooltip, Button, TextField, Typography } from '@material-ui/core';
 import useTable from "../../Components/useTable";
 import * as employeeService from '../../Services/service';
 import { Search } from "@material-ui/icons";
@@ -11,6 +11,11 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { useHistory } from 'react-router-dom';
 import AddIcon from '@material-ui/icons/Add';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const useStyles = makeStyles(theme => ({
     pageContent: {
@@ -43,6 +48,8 @@ export default function EmployeeTable() {
     const classes = useStyles();
     const [records, setRecords] = useState(employeeService.getAllEmployees())
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
+    const [open, setOpen] = useState(false);
+    const [itemId, setId] = useState(0);
 
     const {
         TableContainer,
@@ -70,8 +77,9 @@ export default function EmployeeTable() {
         })
     }
 
-    function handleDelete(id){
-        employeeService.deleteEmployee(id);
+    function handleDelete(){
+        employeeService.deleteEmployee(itemId);
+        setOpen(false);
         setRecords(employeeService.getAllEmployees());
     }
     const history = useHistory();
@@ -86,6 +94,15 @@ export default function EmployeeTable() {
     }
 
     const checkNumber = employeeService.getAllEmployees();
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const handleOpen = (id) => {
+        setOpen(true);
+        setId(id);
+    }
 
     return (
         <>
@@ -136,7 +153,7 @@ export default function EmployeeTable() {
                                         </IconButton>
                                     </Tooltip>
                                     <Tooltip title="Delete">
-                                        <IconButton aria-label="delete"  onClick={()=> handleDelete(item.id)}>
+                                        <IconButton aria-label="delete"  onClick={() => handleOpen(item.id)}>
                                             <DeleteIcon />
                                         </IconButton>
                                     </Tooltip>
@@ -149,6 +166,24 @@ export default function EmployeeTable() {
             </Paper>
             </>
             }
+            <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            >
+            <DialogTitle id="alert-dialog-title">Do you want to delete the record?</DialogTitle>
+            <DialogContent>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleDelete} color="primary">
+                Yes
+                </Button>
+                <Button onClick={handleClose} color="primary" autoFocus>
+                No
+                </Button>
+            </DialogActions>
+            </Dialog>
         </>
     )
 }

@@ -18,7 +18,6 @@ export default function EditEmployee(props) {
     console.log(id);
     const classes = useStyles();
     const details = employeeService.getEmployeeById(id);
-    // console.log(details);
 
     return (
         <>
